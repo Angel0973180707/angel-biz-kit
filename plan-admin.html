@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天使智慧商務 · 需求管理後台</title>
+<style>
+:root{
+  --dark:#1B2F3A;--green:#1B3A2A;--green-mid:#2D5C42;--green-soft:#4A7C59;
+  --green-pale:#EAF3EC;--gold:#C8962A;--gold-pale:#FBF4E8;--gold-light:#F5E8C8;
+  --text:#1A2A1E;--text-mid:#4A5C4E;--text-dim:#8A9E8E;
+  --border:#D8E8DA;--bg:#F7FAF8;--white:#fff;--red:#C94A3A;--blue:#2563EB;
+  --font:'PingFang TC','Microsoft JhengHei','Noto Sans TC',sans-serif;
+  --r:12px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+
+/* ── LOGIN ── */
+.login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.login-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:32px 28px;max-width:360px;width:100%;text-align:center}
+.login-logo{width:52px;height:52px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:var(--green);margin:0 auto 14px}
+.login-title{font-size:18px;font-weight:900;color:var(--green);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text-dim);margin-bottom:24px}
+.login-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:16px;padding:13px;font-family:var(--font);outline:none;text-align:center;letter-spacing:3px;margin-bottom:12px}
+.login-input:focus{border-color:var(--green)}
+.login-btn{width:100%;padding:14px;background:var(--gold);color:var(--green);border:none;border-radius:var(--rs);font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font)}
+.login-error{font-size:12px;color:var(--red);margin-top:8px;display:none}
+
+/* ── HEADER ── */
+.app-header{background:var(--green);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-brand{display:flex;align-items:center;gap:10px;color:#fff}
+.header-logo{width:34px;height:34px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:var(--green)}
+.header-title{font-size:15px;font-weight:800}
+.header-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+.header-actions{display:flex;gap:8px}
+.btn-sm{padding:7px 14px;border-radius:99px;font-size:12px;font-weight:800;border:none;cursor:pointer;font-family:var(--font)}
+.btn-sm-outline{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.btn-sm-gold{background:var(--gold);color:var(--green)}
+
+/* ── MAIN ── */
+.main{display:none;flex-direction:column;min-height:100vh}
+.main.show{display:flex}
+
+/* ── STATS BAR ── */
+.stats-bar{background:var(--white);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;gap:20px;overflow-x:auto}
+.stat{text-align:center;flex-shrink:0}
+.stat-num{font-size:22px;font-weight:900;color:var(--green)}
+.stat-label{font-size:10px;color:var(--text-dim);margin-top:1px}
+
+/* ── FILTER TABS ── */
+.filter-tabs{padding:12px 16px;background:var(--white);border-bottom:1px solid var(--border);display:flex;gap:8px;overflow-x:auto}
+.filter-chip{padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:var(--white);color:var(--text-mid);cursor:pointer;white-space:nowrap;font-family:var(--font)}
+.filter-chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* ── SUBMISSIONS LIST ── */
+.list-wrap{padding:16px;flex:1}
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-dim)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+
+.req-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.req-card-header{padding:14px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:12px}
+.req-card-header:active{background:var(--bg)}
+.req-avatar{width:42px;height:42px;border-radius:50%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--green-mid);flex-shrink:0}
+.req-info{flex:1;min-width:0}
+.req-name{font-size:15px;font-weight:800;color:var(--text)}
+.req-meta{font-size:12px;color:var(--text-dim);margin-top:3px}
+.req-features{font-size:11px;color:var(--text-mid);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.req-right{text-align:right;flex-shrink:0}
+.req-price{font-size:13px;font-weight:800;color:var(--gold)}
+.req-date{font-size:10px;color:var(--text-dim);margin-top:3px}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;margin-top:5px}
+.status-new{background:#EBF5FF;color:var(--blue)}
+.status-contacted{background:var(--gold-pale);color:var(--gold)}
+.status-deal{background:var(--green-pale);color:var(--green-mid)}
+.status-lost{background:#FEE2E2;color:var(--red)}
+
+.req-detail{display:none;border-top:1px solid var(--border);padding:14px 16px;background:var(--bg)}
+.req-card.open .req-detail{display:block}
+.detail-row{display:flex;gap:8px;margin-bottom:10px;font-size:13px}
+.detail-label{color:var(--text-dim);min-width:64px;flex-shrink:0;font-weight:600}
+.detail-value{color:var(--text);flex:1;line-height:1.6}
+.detail-features{background:var(--white);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;font-size:12px;color:var(--text-mid);line-height:2;margin:8px 0}
+.admin-note-input{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;padding:10px;font-family:var(--font);resize:none;height:64px;outline:none;margin-bottom:10px}
+.admin-note-input:focus{border-color:var(--green)}
+
+.action-btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn-action{padding:8px 14px;border-radius:var(--rs);font-size:12px;font-weight:800;border:none;cursor:pointer;font-family:var(--font)}
+.btn-contacted{background:var(--gold-pale);color:var(--gold)}
+.btn-deal{background:var(--green-pale);color:var(--green-mid)}
+.btn-lost{background:#FEE2E2;color:var(--red)}
+.btn-proposal{background:var(--green);color:#fff}
+.btn-claude{background:var(--dark);color:#fff}
+.btn-note{background:var(--bg);color:var(--text-mid);border:1px solid var(--border)}
+
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--white);border-radius:var(--r);width:100%;max-width:640px;margin:auto;overflow:hidden}
+.modal-header{background:var(--green);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:16px;font-weight:800}
+.modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:20px}
+.modal-actions{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.btn-copy{padding:10px 20px;background:var(--gold);color:var(--green);border:none;border-radius:var(--rs);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font)}
+.btn-print{padding:10px 20px;background:var(--green);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font)}
+.btn-cancel{padding:10px 20px;background:var(--bg);color:var(--text-mid);border:1px solid var(--border);border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)}
+
+/* ── PROPOSAL PREVIEW ── */
+.proposal-preview{font-size:13px;line-height:1.8;color:var(--text)}
+.proposal-header-box{background:var(--green);color:#fff;border-radius:var(--rs);padding:20px;margin-bottom:16px}
+.proposal-client{font-size:18px;font-weight:900;margin-bottom:4px}
+.proposal-date{font-size:11px;color:rgba(255,255,255,.7)}
+.proposal-section{margin-bottom:16px}
+.proposal-section-title{font-size:12px;font-weight:900;color:var(--green);border-left:3px solid var(--gold);padding-left:10px;margin-bottom:8px}
+.proposal-feature-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dotted var(--border);font-size:13px}
+.proposal-feature-row:last-child{border:none}
+.proposal-total-row{display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--border);font-size:15px;font-weight:900;margin-top:4px}
+.proposal-total-row span:last-child{color:var(--gold)}
+.proposal-info-box{background:var(--green-pale);border-radius:var(--rs);padding:12px;font-size:12px;color:var(--text-mid);line-height:1.9}
+.proposal-footer{border-top:1px solid var(--border);margin-top:16px;padding-top:12px;font-size:11px;color:var(--text-dim);text-align:center}
+
+/* ── CLAUDE PROMPT ── */
+.claude-prompt-box{background:#0D1117;border-radius:var(--rs);padding:16px;font-family:'Courier New',monospace;font-size:12px;color:#E6EDF3;line-height:1.7;white-space:pre-wrap;max-height:400px;overflow-y:auto}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;border-radius:99px;padding:10px 20px;font-size:13px;font-weight:600;z-index:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--red)}
+
+@media print{
+  body *{visibility:hidden}
+  .proposal-preview,.proposal-preview *{visibility:visible}
+  .proposal-preview{position:fixed;inset:0;padding:32px;background:#fff}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">天</div>
+    <div class="login-title">需求管理後台</div>
+    <div class="login-sub">天使智慧商務 · 僅限 Angel 使用</div>
+    <input type="password" class="login-input" id="pwd-input" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">進入後台</button>
+    <div class="login-error" id="login-error">密碼錯誤，請重試</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main-app" class="main">
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-brand">
+      <div class="header-logo">天</div>
+      <div>
+        <div class="header-title">需求管理後台</div>
+        <div class="header-sub">天使智慧商務</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-sm btn-sm-outline" onclick="loadData()">重新整理</button>
+      <a href="plan.html" target="_blank"><button class="btn-sm btn-sm-gold">看展示頁</button></a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num" id="stat-total">0</div><div class="stat-label">總需求數</div></div>
+    <div class="stat"><div class="stat-num" id="stat-new" style="color:var(--blue)">0</div><div class="stat-label">新需求</div></div>
+    <div class="stat"><div class="stat-num" id="stat-contacted" style="color:var(--gold)">0</div><div class="stat-label">已聯繫</div></div>
+    <div class="stat"><div class="stat-num" id="stat-deal" style="color:var(--green-mid)">0</div><div class="stat-label">已成交</div></div>
+    <div class="stat"><div class="stat-num" id="stat-lost" style="color:var(--red)">0</div><div class="stat-label">未成交</div></div>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-tabs">
+    <button class="filter-chip active" onclick="setFilter('all',this)">全部</button>
+    <button class="filter-chip" onclick="setFilter('新需求',this)">新需求</button>
+    <button class="filter-chip" onclick="setFilter('已聯繫',this)">已聯繫</button>
+    <button class="filter-chip" onclick="setFilter('已成交',this)">已成交</button>
+    <button class="filter-chip" onclick="setFilter('未成交',this)">未成交</button>
+  </div>
+
+  <!-- List -->
+  <div class="list-wrap" id="list-wrap">
+    <div class="empty-state"><div class="empty-icon">⏳</div><div>載入中...</div></div>
+  </div>
+</div>
+
+<!-- 提案 Modal -->
+<div class="modal-overlay" id="proposal-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">📄 專案提案書預覽</div>
+      <button class="modal-close" onclick="closeModal('proposal-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="proposal-preview" id="proposal-content"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('proposal-modal')">關閉</button>
+      <button class="btn-copy" onclick="copyProposal()">複製文字</button>
+      <button class="btn-print" onclick="window.print()">列印 / 存 PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- Claude 指令 Modal -->
+<div class="modal-overlay" id="claude-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">🤖 Claude 開發指令</div>
+      <button class="modal-close" onclick="closeModal('claude-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-mid);margin-bottom:12px">複製下方指令，貼到 Claude 開始開發這個客戶的系統：</p>
+      <div class="claude-prompt-box" id="claude-content"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('claude-modal')">關閉</button>
+      <button class="btn-copy" onclick="copyClaudePrompt()">一鍵複製指令</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL    = 'YOUR_GAS_URL_HERE';
+const ADMIN_KEY  = 'ANGEL20261972';
+const PASSWORD   = 'angel2026';
+
+// ── LOGIN ──
+function doLogin(){
+  const pwd = document.getElementById('pwd-input').value;
+  if(pwd === PASSWORD){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('main-app').classList.add('show');
+    loadData();
+  } else {
+    document.getElementById('login-error').style.display='block';
+  }
+}
+
+// ── DATA ──
+let allData = [];
+let currentFilter = 'all';
+
+async function loadData(){
+  document.getElementById('list-wrap').innerHTML=
+    '<div class="empty-state"><div class="empty-icon">⏳</div><div>載入中...</div></div>';
+  try{
+    if(GAS_URL === 'YOUR_GAS_URL_HERE'){
+      allData = getDemoData();
+    } else {
+      const r = await fetch(GAS_URL+'?action=getPlans&key='+ADMIN_KEY);
+      const d = await r.json();
+      allData = d.ok ? d.data : getDemoData();
+    }
+    renderStats();
+    renderList();
+  }catch(e){
+    allData = getDemoData();
+    renderStats();
+    renderList();
+  }
+}
+
+function getDemoData(){
+  return [
+    { id:'REQ001', name:'王小明', phone:'0912345678', business_type:'食品 / 農產品',
+      features:'智慧數位名片、商品訂購前台、訂單管理後台、庫存管理、LINE 官方帳號建立',
+      budget:'NT$6,000–10,000', price_range:'NT$7,100–12,500',
+      note:'我賣有機蔬菜，現在用 LINE 群組接單，想要有個正式的訂購頁面',
+      status:'新需求', created_at:'2026-06-12', admin_note:'' },
+    { id:'REQ002', name:'陳美玲', phone:'0987654321', business_type:'課程 / 工作坊',
+      features:'活動展示前台、線上報名表單、LINE 官方帳號建立、LINE 自動通知',
+      budget:'NT$3,000–6,000', price_range:'NT$6,000–9,500',
+      note:'我開瑜珈課，每次報名都要一個個回覆 LINE，很累',
+      status:'已聯繫', created_at:'2026-06-10', admin_note:'已電話聯繫，她覺得報價偏高，考慮中' },
+    { id:'REQ003', name:'林老闆', phone:'0933111222', business_type:'健康產品 / 直銷',
+      features:'智慧數位名片、推薦人追蹤系統、商品訂購前台、LINE 官方帳號建立、Google 商家地圖',
+      budget:'NT$6,000–10,000', price_range:'NT$7,100–11,500',
+      note:'我賣保健品，需要追蹤是誰介紹的客人，還要有 Google 地圖',
+      status:'已成交', created_at:'2026-06-08', admin_note:'成交 NT$8,500，2026-06-15 開始建置' },
+  ];
+}
+
+function renderStats(){
+  const counts = {total:allData.length, '新需求':0, '已聯繫':0, '已成交':0, '未成交':0};
+  allData.forEach(d=>{ if(counts[d.status]!==undefined) counts[d.status]++; });
+  document.getElementById('stat-total').textContent = counts.total;
+  document.getElementById('stat-new').textContent = counts['新需求'];
+  document.getElementById('stat-contacted').textContent = counts['已聯繫'];
+  document.getElementById('stat-deal').textContent = counts['已成交'];
+  document.getElementById('stat-lost').textContent = counts['未成交'];
+}
+
+function setFilter(f, el){
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderList();
+}
+
+function renderList(){
+  const list = currentFilter==='all' ? allData : allData.filter(d=>d.status===currentFilter);
+  const wrap = document.getElementById('list-wrap');
+  if(!list.length){
+    wrap.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div>沒有符合的需求</div></div>';
+    return;
+  }
+  wrap.innerHTML = list.map(d=>reqCard(d)).join('');
+}
+
+const STATUS_MAP = { '新需求':'status-new', '已聯繫':'status-contacted', '已成交':'status-deal', '未成交':'status-lost' };
+
+function reqCard(d){
+  return `<div class="req-card" id="card-${d.id}">
+    <div class="req-card-header" onclick="toggleCard('${d.id}')">
+      <div class="req-avatar">${d.name[0]}</div>
+      <div class="req-info">
+        <div class="req-name">${d.name}</div>
+        <div class="req-meta">📱 ${d.phone} ｜ ${d.business_type}</div>
+        <div class="req-features">${d.features||'—'}</div>
+      </div>
+      <div class="req-right">
+        <div class="req-price">${d.price_range||'—'}</div>
+        <div class="req-date">${d.created_at||'—'}</div>
+        <div class="status-badge ${STATUS_MAP[d.status]||''}">${d.status}</div>
+      </div>
+    </div>
+    <div class="req-detail" id="detail-${d.id}">
+      <div class="detail-row"><span class="detail-label">業務類型</span><span class="detail-value">${d.business_type}</span></div>
+      <div class="detail-row"><span class="detail-label">預算範圍</span><span class="detail-value">${d.budget||'—'}</span></div>
+      <div class="detail-row"><span class="detail-label">估算報價</span><span class="detail-value" style="color:var(--gold);font-weight:700">${d.price_range||'—'}</span></div>
+      <div class="detail-row"><span class="detail-label">選擇功能</span><div class="detail-features">${(d.features||'未指定').split('、').join('<br>')}</div></div>
+      ${d.note?`<div class="detail-row"><span class="detail-label">客戶說明</span><span class="detail-value">${d.note}</span></div>`:''}
+      <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--text-mid)">我的備註：</div>
+      <textarea class="admin-note-input" id="note-${d.id}" placeholder="記錄聯繫狀況、報價調整、特殊需求...">${d.admin_note||''}</textarea>
+      <div class="action-btns">
+        <button class="btn-action btn-contacted" onclick="updateStatus('${d.id}','已聯繫')">📞 已聯繫</button>
+        <button class="btn-action btn-deal" onclick="updateStatus('${d.id}','已成交')">✅ 已成交</button>
+        <button class="btn-action btn-lost" onclick="updateStatus('${d.id}','未成交')">❌ 未成交</button>
+        <button class="btn-action btn-note" onclick="saveNote('${d.id}')">💾 存備註</button>
+        <button class="btn-action btn-proposal" onclick="openProposal('${d.id}')">📄 產生提案</button>
+        <button class="btn-action btn-claude" onclick="openClaude('${d.id}')">🤖 Claude 指令</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleCard(id){
+  document.getElementById('card-'+id).classList.toggle('open');
+}
+
+async function updateStatus(id, status){
+  const item = allData.find(d=>d.id===id);
+  if(!item) return;
+  item.status = status;
+  if(GAS_URL !== 'YOUR_GAS_URL_HERE'){
+    const note = document.getElementById('note-'+id)?.value || '';
+    await fetch(GAS_URL+'?'+new URLSearchParams({action:'updatePlan',key:ADMIN_KEY,id,status,admin_note:note}));
+  }
+  renderStats();
+  renderList();
+  showToast('狀態已更新：'+status);
+}
+
+async function saveNote(id){
+  const item = allData.find(d=>d.id===id);
+  if(!item) return;
+  const note = document.getElementById('note-'+id)?.value || '';
+  item.admin_note = note;
+  if(GAS_URL !== 'YOUR_GAS_URL_HERE'){
+    await fetch(GAS_URL+'?'+new URLSearchParams({action:'updatePlan',key:ADMIN_KEY,id,admin_note:note,status:item.status}));
+  }
+  showToast('備註已儲存');
+}
+
+// ── PROPOSAL ──
+const FEATURE_DETAIL = {
+  '智慧數位名片':         { min:1500, max:2500, desc:'QR Code 掃描、個人手機頁面、社群連結整合' },
+  '推薦人追蹤系統':       { min:800,  max:1500, desc:'業績來源自動記錄、推薦人統計' },
+  'LINE 官方帳號建立':    { min:1500, max:3000, desc:'申請、基本設定、歡迎訊息、圖文選單' },
+  'Google 商家地圖':      { min:800,  max:1500, desc:'申請商家、資料設定、照片上傳、教學' },
+  '商品訂購前台':         { min:1500, max:2500, desc:'手機版購物頁、商品分類、購物車、送出訂單' },
+  '訂單管理後台':         { min:800,  max:1500, desc:'查看訂單、確認收款、標記出貨' },
+  '庫存管理':             { min:800,  max:1500, desc:'入庫出庫記錄、低庫存提醒、自動下架' },
+  '退貨退款':             { min:500,  max:1000, desc:'退貨記錄、庫存補回、帳本自動更新' },
+  '活動展示前台':         { min:1200, max:2000, desc:'活動清單、詳情頁、封面圖、報名入口' },
+  '線上報名表單':         { min:800,  max:1500, desc:'客製化欄位、名額控管、即時確認通知' },
+  '會員資料管理':         { min:800,  max:1500, desc:'建立會員資料、消費記錄、查詢功能' },
+  '點數累積系統':         { min:800,  max:1500, desc:'消費送點、點數記錄、餘額查詢' },
+  'LINE 自動通知':        { min:500,  max:1000, desc:'訂單/報名/付款 自動推播給客人' },
+  '帳本收支記錄':         { min:500,  max:1000, desc:'收入支出記錄、餘額計算、對帳輔助' },
+  '報表匯出':             { min:300,  max:600,  desc:'交易明細、帳務統計、CSV 一鍵下載' },
+};
+
+function openProposal(id){
+  const item = allData.find(d=>d.id===id);
+  if(!item) return;
+  const features = (item.features||'').split('、').filter(Boolean);
+  const today = new Date().toLocaleDateString('zh-TW');
+  let totalMin = 2000, totalMax = 3000;
+  features.forEach(f=>{ const fd=FEATURE_DETAIL[f.trim()]; if(fd){totalMin+=fd.min;totalMax+=fd.max;} });
+
+  const featureRows = features.map(f=>{
+    const fd = FEATURE_DETAIL[f.trim()];
+    if(!fd) return `<div class="proposal-feature-row"><span>${f}</span><span style="color:var(--gold)">洽談</span></div>`;
+    return `<div class="proposal-feature-row">
+      <span>${f}<br><span style="font-size:11px;color:var(--text-dim)">${fd.desc}</span></span>
+      <span style="color:var(--gold);white-space:nowrap">NT$${fd.min.toLocaleString()}–${fd.max.toLocaleString()}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('proposal-content').innerHTML = `
+    <div class="proposal-header-box">
+      <div class="proposal-client">專為 ${item.name} 規劃</div>
+      <div class="proposal-date">提案日期：${today} ｜ 業務類型：${item.business_type}</div>
+    </div>
+
+    <div class="proposal-section">
+      <div class="proposal-section-title">一、需求摘要</div>
+      <div style="font-size:13px;color:var(--text-mid);line-height:1.9">
+        業務類型：${item.business_type}<br>
+        預算範圍：${item.budget||'待確認'}<br>
+        ${item.note?`客戶說明：${item.note}`:''}
+      </div>
+    </div>
+
+    <div class="proposal-section">
+      <div class="proposal-section-title">二、建置項目與估價</div>
+      <div class="proposal-feature-row" style="font-weight:700;font-size:12px;color:var(--text-dim)">
+        <span>基本建置費（部署+教學+1個月協助）</span><span style="color:var(--text-mid)">NT$2,000–3,000</span>
+      </div>
+      ${featureRows}
+      <div class="proposal-total-row">
+        <span>估算合計（參考區間）</span>
+        <span>NT$${totalMin.toLocaleString()} – ${totalMax.toLocaleString()}</span>
+      </div>
+    </div>
+
+    <div class="proposal-section">
+      <div class="proposal-section-title">三、合作說明</div>
+      <div class="proposal-info-box">
+        ✅ 一次性建置費，建好後不需每月繳平台費<br>
+        ✅ 您的資料完全自有（存在您的 Google 試算表）<br>
+        ✅ 手機版優先設計，客人不需下載 APP<br>
+        ✅ 支援 ATM 轉帳、現場收款等手動對帳方式<br>
+        ✅ 建置後 1 個月免費協助期，LINE 隨時詢問<br>
+        ⏱ 預計工作時間：7–14 個工作天（依功能數量）
+      </div>
+    </div>
+
+    <div class="proposal-section">
+      <div class="proposal-section-title">四、下一步</div>
+      <div style="font-size:13px;color:var(--text-mid);line-height:2.2">
+        ① 確認功能清單與最終報價<br>
+        ② 約定開始時間，您提供資料（商品/活動/LOGO）<br>
+        ③ 建置完成後線上教學，確認使用順暢<br>
+        ④ 正式上線 🎉
+      </div>
+    </div>
+
+    <div class="proposal-footer">
+      天使智慧商務 · Angel<br>
+      LINE：lin.ee/tMag2XG ｜ 手機：0973-180-707<br>
+      本提案報價為參考區間，依實際需求調整，歡迎討論
+    </div>`;
+
+  document.getElementById('proposal-modal').classList.add('open');
+}
+
+function copyProposal(){
+  const el = document.getElementById('proposal-content');
+  const text = el.innerText;
+  navigator.clipboard.writeText(text).then(()=>showToast('提案文字已複製'));
+}
+
+// ── CLAUDE PROMPT ──
+function openClaude(id){
+  const item = allData.find(d=>d.id===id);
+  if(!item) return;
+  const features = (item.features||'').split('、').filter(Boolean);
+  const featureList = features.map(f=>`- ${f}：${FEATURE_DETAIL[f.trim()]?.desc||'依需求客製'}`).join('\n');
+
+  const prompt = `================================================================
+客戶系統建置需求 — Claude 開發指令
+================================================================
+
+【客戶基本資料】
+姓名：${item.name}
+業務類型：${item.business_type}
+預算：${item.budget||'待確認'}
+客戶說明：${item.note||'無'}
+
+【需要建置的功能清單】
+${featureList}
+
+【技術架構（依照 Angel 的標準架構）】
+- 前端：GitHub Pages 靜態 HTML（手機優先）
+- 後端：Google Apps Script（GAS）Web App
+- 資料庫：Google Sheets（DATA_ROW=3：第1列中文標題、第2列英文欄位、第3列起資料）
+- 圖片儲存：Firebase Storage（路徑用 cards/ 前綴）
+- 通知：LINE Bot API（LINE_TOKEN + LINE_USER_ID 由客戶提供）
+- 付款：手動對帳（ATM 轉帳 / 現場收款），不整合自動金流
+
+【請給我以下內容】
+1. 需要建立哪些 Google Sheets 工作表和欄位
+   （每表包含：中文名稱、英文欄位名稱、資料格式說明）
+
+2. 完整的 GAS 程式碼（一份可完整貼上執行的版本）
+   包含：doGet、doPost、所有 action 函式、LINE 通知函式
+
+3. 前端頁面清單與各頁面的功能說明
+   （之後我會個別請你寫各頁面的 HTML）
+
+4. 有什麼需要向客戶確認的資料或設定？
+
+================================================================
+備註：Angel 沒有寫程式背景，請用白話文說明，每次只改一個地方
+================================================================`;
+
+  document.getElementById('claude-content').textContent = prompt;
+  document.getElementById('claude-modal').classList.add('open');
+}
+
+function copyClaudePrompt(){
+  const text = document.getElementById('claude-content').textContent;
+  navigator.clipboard.writeText(text).then(()=>showToast('Claude 指令已複製，可直接貼給 Claude'));
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+}
+
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(type?' '+type:'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>

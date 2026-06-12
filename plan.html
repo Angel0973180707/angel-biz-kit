@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>天使智慧商務 · 輕鬆擁有你的數位系統</title>
+<style>
+:root{
+  --dark:#1B2F3A;
+  --green:#1B3A2A;
+  --green-mid:#2D5C42;
+  --green-soft:#4A7C59;
+  --green-pale:#EAF3EC;
+  --gold:#C8962A;
+  --gold-pale:#FBF4E8;
+  --gold-light:#F5E8C8;
+  --text:#1A2A1E;
+  --text-mid:#4A5C4E;
+  --text-dim:#8A9E8E;
+  --border:#D8E8DA;
+  --bg:#F7FAF8;
+  --white:#FFFFFF;
+  --red:#C94A3A;
+  --font:'PingFang TC','Microsoft JhengHei','Noto Sans TC',sans-serif;
+  --r:14px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.6}
+a{color:inherit;text-decoration:none}
+
+/* ── NAV ── */
+nav{background:var(--green);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px;color:#fff}
+.nav-logo{width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--green)}
+.nav-name{font-size:15px;font-weight:800}
+.nav-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+.nav-cta{background:var(--gold);color:var(--green);padding:9px 16px;border-radius:99px;font-size:13px;font-weight:800;border:none;cursor:pointer;font-family:var(--font);white-space:nowrap}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,var(--green) 0%,#0F2419 100%);padding:52px 24px 60px;text-align:center;color:#fff}
+.hero-tag{display:inline-block;background:rgba(200,150,42,.2);border:1px solid rgba(200,150,42,.4);color:var(--gold);padding:5px 14px;border-radius:99px;font-size:12px;font-weight:700;margin-bottom:20px}
+.hero h1{font-size:28px;font-weight:900;line-height:1.3;margin-bottom:16px}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.75);line-height:1.8;max-width:480px;margin:0 auto 32px}
+.hero-btns{display:flex;flex-direction:column;gap:12px;max-width:320px;margin:0 auto}
+.btn-primary{background:var(--gold);color:var(--green);padding:15px 24px;border-radius:var(--rs);font-size:16px;font-weight:800;border:none;cursor:pointer;font-family:var(--font);display:block;text-align:center}
+.btn-secondary{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:13px 24px;border-radius:var(--rs);font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);display:block;text-align:center}
+
+/* ── PAIN POINTS ── */
+.section{padding:48px 20px}
+.section-center{text-align:center}
+.section-tag{display:inline-block;background:var(--gold-pale);color:var(--gold);padding:4px 12px;border-radius:99px;font-size:11px;font-weight:800;margin-bottom:12px}
+.section h2{font-size:22px;font-weight:900;color:var(--green);margin-bottom:8px}
+.section-sub{font-size:14px;color:var(--text-mid);max-width:480px;margin:0 auto 28px}
+
+.pain-grid{display:grid;gap:12px}
+.pain-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:20px;display:flex;gap:14px;align-items:flex-start}
+.pain-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.pain-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:5px}
+.pain-desc{font-size:13px;color:var(--text-mid);line-height:1.7}
+.pain-arrow{text-align:center;font-size:22px;color:var(--gold);margin:4px 0}
+.solution-badge{background:var(--green-pale);border:1.5px solid var(--border);border-radius:99px;padding:6px 16px;font-size:12px;font-weight:700;color:var(--green-mid);display:inline-block;margin-top:8px}
+
+/* ── SERVICES ── */
+.services-bg{background:var(--white)}
+.services-grid{display:grid;gap:10px}
+.service-cat{background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.service-cat-header{background:var(--green);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px}
+.service-cat-icon{font-size:20px}
+.service-cat-name{font-size:14px;font-weight:800}
+.service-items{padding:4px 0}
+.service-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.service-item:last-child{border:none}
+.service-check{width:20px;height:20px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:900;flex-shrink:0}
+.service-item-name{font-size:13px;font-weight:700;flex:1}
+.service-item-range{font-size:11px;color:var(--gold);font-weight:700;white-space:nowrap}
+
+/* ── PRICE CALCULATOR ── */
+.calc-bg{background:var(--green-pale)}
+.calc-wrap{max-width:600px;margin:0 auto}
+.calc-note{background:var(--gold-pale);border:1.5px solid var(--gold-light);border-radius:var(--rs);padding:12px 16px;font-size:12px;color:#7A5C2A;margin-bottom:20px;line-height:1.7}
+
+.feature-group{margin-bottom:16px}
+.feature-group-title{font-size:12px;font-weight:800;color:var(--green);background:var(--white);border:1.5px solid var(--border);border-radius:var(--rs);padding:8px 14px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.feature-list{display:flex;flex-direction:column;gap:6px}
+.feature-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--rs);padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;-webkit-user-select:none;user-select:none}
+.feature-item.selected{border-color:var(--green);background:var(--green-pale)}
+.feature-item:active{background:var(--green-pale)}
+.feature-checkbox{width:22px;height:22px;border:2px solid var(--border);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.feature-item.selected .feature-checkbox{background:var(--green);border-color:var(--green)}
+.feature-checkbox::after{content:'✓';color:#fff;font-size:13px;font-weight:900;opacity:0}
+.feature-item.selected .feature-checkbox::after{opacity:1}
+.feature-info{flex:1}
+.feature-name{font-size:14px;font-weight:700;color:var(--text)}
+.feature-desc{font-size:11px;color:var(--text-dim);margin-top:2px}
+.feature-price{font-size:12px;font-weight:700;color:var(--gold);white-space:nowrap;text-align:right}
+.feature-price-unit{font-size:9px;color:var(--text-dim);display:block;text-align:right}
+
+.price-display{background:var(--green);color:#fff;border-radius:var(--r);padding:20px;margin-top:20px;text-align:center;position:sticky;bottom:14px;box-shadow:0 4px 20px rgba(27,58,42,.3)}
+.price-label{font-size:12px;color:rgba(255,255,255,.7);margin-bottom:6px}
+.price-range{font-size:28px;font-weight:900;color:var(--gold);line-height:1}
+.price-note{font-size:11px;color:rgba(255,255,255,.6);margin-top:6px}
+.price-items-count{font-size:12px;color:rgba(255,255,255,.8);margin-top:4px}
+.btn-quote{background:var(--gold);color:var(--green);border:none;padding:13px 24px;border-radius:var(--rs);font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font);margin-top:14px;width:100%}
+
+/* ── BUNDLES ── */
+.bundles-grid{display:grid;gap:14px}
+.bundle-card{background:var(--white);border:2px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .2s}
+.bundle-card.popular{border-color:var(--gold)}
+.bundle-header{padding:16px 18px 12px;background:var(--bg)}
+.bundle-card.popular .bundle-header{background:var(--gold-pale)}
+.bundle-tag{font-size:10px;font-weight:800;color:var(--gold);background:var(--gold-pale);border:1px solid var(--gold-light);padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:6px}
+.bundle-name{font-size:17px;font-weight:900;color:var(--green);margin-bottom:4px}
+.bundle-for{font-size:12px;color:var(--text-mid)}
+.bundle-price{font-size:20px;font-weight:900;color:var(--gold);padding:10px 18px;border-top:1px solid var(--border)}
+.bundle-features{padding:12px 18px 16px}
+.bundle-feature-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mid);padding:4px 0}
+.bundle-feature-item::before{content:'✓';color:var(--green-soft);font-weight:900;font-size:12px}
+.btn-select-bundle{width:calc(100% - 36px);margin:0 18px 16px;padding:12px;background:var(--green);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font)}
+
+/* ── CONTACT FORM ── */
+.form-bg{background:var(--white);border-top:3px solid var(--gold)}
+.form-wrap{max-width:500px;margin:0 auto}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:800;color:var(--text-mid);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:15px;padding:12px 14px;font-family:var(--font);outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green)}
+.field textarea{resize:none;height:80px}
+.selected-summary{background:var(--green-pale);border:1.5px solid var(--border);border-radius:var(--rs);padding:12px 14px;font-size:12px;color:var(--text-mid);margin-bottom:14px;line-height:1.9;min-height:48px}
+.selected-summary strong{color:var(--green);display:block;margin-bottom:4px;font-size:13px}
+.btn-submit{width:100%;padding:16px;background:var(--gold);color:var(--green);border:none;border-radius:var(--rs);font-size:16px;font-weight:900;cursor:pointer;font-family:var(--font)}
+.btn-submit:disabled{background:var(--text-dim);color:#fff;cursor:not-allowed}
+.form-note{font-size:11px;color:var(--text-dim);text-align:center;margin-top:10px;line-height:1.8}
+
+/* ── SUCCESS ── */
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(27,58,42,.9);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center}
+.success-overlay.open{display:flex}
+.success-box{background:#fff;border-radius:var(--r);padding:32px 28px;max-width:360px;width:100%}
+.success-icon{font-size:56px;margin-bottom:12px}
+.success-title{font-size:20px;font-weight:900;color:var(--green);margin-bottom:8px}
+.success-sub{font-size:13px;color:var(--text-mid);line-height:1.8;margin-bottom:20px}
+.btn-line{display:block;background:#06C755;color:#fff;padding:14px;border-radius:var(--rs);font-size:15px;font-weight:800;text-align:center;margin-bottom:10px}
+.btn-back{background:transparent;border:1.5px solid var(--border);color:var(--text-mid);padding:12px;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);width:100%}
+
+/* ── FOOTER ── */
+footer{background:var(--green);color:rgba(255,255,255,.7);padding:28px 20px;text-align:center;font-size:12px}
+footer strong{color:#fff;display:block;font-size:14px;margin-bottom:6px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;border-radius:99px;padding:10px 20px;font-size:13px;font-weight:600;z-index:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--red)}
+
+@media(min-width:600px){
+  .pain-grid,.services-grid,.bundles-grid{grid-template-columns:1fr 1fr}
+  .hero h1{font-size:34px}
+  .hero-btns{flex-direction:row;max-width:420px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">天</div>
+    <div>
+      <div class="nav-name">天使智慧商務</div>
+      <div class="nav-sub">小預算 · 大系統</div>
+    </div>
+  </div>
+  <button class="nav-cta" onclick="scrollToForm()">免費諮詢報價</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">✦ 專為台灣小型業者設計</div>
+  <h1>不用每月繳平台費<br>也能有<em>完整的數位系統</em></h1>
+  <p class="hero-sub">LINE 訂購、活動報名、會員點數、智慧名片、帳本管理<br>一次建好，終身使用</p>
+  <div class="hero-btns">
+    <button class="btn-primary" onclick="scrollToCalc()">自己選功能、看報價</button>
+    <button class="btn-secondary" onclick="scrollToForm()">直接聯絡詢問</button>
+  </div>
+</div>
+
+<!-- PAIN POINTS -->
+<div class="section section-center">
+  <div class="section-tag">你是否也有這些困擾？</div>
+  <h2>這些問題很多業者都在面對</h2>
+  <p class="section-sub">你不需要是工程師，也不需要有大預算</p>
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="pain-icon">😵</div>
+      <div>
+        <div class="pain-title">用 LINE 群組接單，越來越亂</div>
+        <div class="pain-desc">訂單散落在對話裡，漏單、忘出貨、客人一直問「我的訂單呢？」</div>
+        <div class="solution-badge">→ 線上訂購系統 + 自動 LINE 通知</div>
+      </div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">📊</div>
+      <div>
+        <div class="pain-title">庫存用 Excel 管，總是對不起來</div>
+        <div class="pain-desc">賣了多少、剩多少、誰欠款、帳怎麼算，每次結帳都頭痛</div>
+        <div class="solution-badge">→ 庫存後台 + 帳本系統</div>
+      </div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">🤝</div>
+      <div>
+        <div class="pain-title">靠口碑介紹，但不知道誰介紹的</div>
+        <div class="pain-desc">業績哪裡來、誰是你的主力業務、推薦人應該怎麼回饋，完全沒有資料</div>
+        <div class="solution-badge">→ 智慧名片 + 推薦人追蹤</div>
+      </div>
+    </div>
+    <div class="pain-card">
+      <div class="pain-icon">🏪</div>
+      <div>
+        <div class="pain-title">想要有個像樣的線上門面</div>
+        <div class="pain-desc">客人搜尋你找不到、名片只有紙本、沒有 LINE OA 和 Google 商家</div>
+        <div class="solution-badge">→ 數位名片 + LINE OA + Google 地圖</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES OVERVIEW -->
+<div class="section services-bg">
+  <div class="section-center">
+    <div class="section-tag">我們提供的服務</div>
+    <h2>依你需要的組合建置</h2>
+    <p class="section-sub">不是套版商城，每個功能都依你的業務調整<br>你的資料在自己的 Google 試算表，完全自有</p>
+  </div>
+  <div class="services-grid" style="margin-top:20px">
+    <div class="service-cat">
+      <div class="service-cat-header">
+        <div class="service-cat-icon">🪪</div>
+        <div class="service-cat-name">數位品牌建立</div>
+      </div>
+      <div class="service-items">
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">智慧數位名片</div><div class="service-item-range">1,500起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">推薦人追蹤系統</div><div class="service-item-range">800起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">LINE 官方帳號建立</div><div class="service-item-range">1,500起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">Google 商家地圖</div><div class="service-item-range">800起</div></div>
+      </div>
+    </div>
+    <div class="service-cat">
+      <div class="service-cat-header">
+        <div class="service-cat-icon">🛍️</div>
+        <div class="service-cat-name">電商訂購系統</div>
+      </div>
+      <div class="service-items">
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">商品訂購前台</div><div class="service-item-range">1,500起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">訂單管理後台</div><div class="service-item-range">800起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">庫存管理</div><div class="service-item-range">800起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">退貨退款功能</div><div class="service-item-range">500起</div></div>
+      </div>
+    </div>
+    <div class="service-cat">
+      <div class="service-cat-header">
+        <div class="service-cat-icon">📅</div>
+        <div class="service-cat-name">活動報名系統</div>
+      </div>
+      <div class="service-items">
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">活動展示前台</div><div class="service-item-range">1,200起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">線上報名表單</div><div class="service-item-range">800起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">名額控管</div><div class="service-item-range">包含</div></div>
+      </div>
+    </div>
+    <div class="service-cat">
+      <div class="service-cat-header">
+        <div class="service-cat-icon">👥</div>
+        <div class="service-cat-name">會員與財務管理</div>
+      </div>
+      <div class="service-items">
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">會員資料管理</div><div class="service-item-range">800起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">點數累積系統</div><div class="service-item-range">800起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">LINE 自動通知</div><div class="service-item-range">500起</div></div>
+        <div class="service-item"><div class="service-check">✓</div><div class="service-item-name">帳本 + 報表匯出</div><div class="service-item-range">500起</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE CALCULATOR -->
+<div class="section calc-bg" id="calc-section">
+  <div class="calc-wrap">
+    <div class="section-center" style="margin-bottom:24px">
+      <div class="section-tag">互動報價計算</div>
+      <h2>勾選你要的功能</h2>
+      <p class="section-sub">即時顯示參考報價區間，功能越多越划算</p>
+    </div>
+    <div class="calc-note">
+      💡 以下報價為<strong>一次性建置費用</strong>，建好後不需要每月繳平台費。<br>
+      基本建置費（部署+教學+1個月協助）NT$2,000–3,000，已包含在合計內。<br>
+      實際報價依需求複雜度調整，有彈性。
+    </div>
+    <div id="feature-groups"></div>
+    <div class="price-display">
+      <div class="price-label">目前選擇的功能合計（參考區間）</div>
+      <div class="price-range" id="price-range">NT$ 2,000 – 3,000</div>
+      <div class="price-items-count" id="price-items-count">已選 0 個功能（基本建置費已含）</div>
+      <div class="price-note">實際報價由 Angel 確認後通知，有彈性空間</div>
+      <button class="btn-quote" onclick="scrollToForm()">送出需求，獲得正式報價 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUNDLES -->
+<div class="section">
+  <div class="section-center">
+    <div class="section-tag">推薦套餐</div>
+    <h2>不知道選什麼？</h2>
+    <p class="section-sub">依業者類型選一個起點，再跟 Angel 討論細節</p>
+  </div>
+  <div class="bundles-grid" style="margin-top:20px">
+    <div class="bundle-card">
+      <div class="bundle-header">
+        <div class="bundle-tag">健康事業 / 直銷</div>
+        <div class="bundle-name">名片拓客套</div>
+        <div class="bundle-for">適合：健康產品、直銷業者、個人品牌</div>
+      </div>
+      <div class="bundle-price">NT$ 5,000 – 8,000</div>
+      <div class="bundle-features">
+        <div class="bundle-feature-item">智慧數位名片 + QR Code</div>
+        <div class="bundle-feature-item">推薦人追蹤系統</div>
+        <div class="bundle-feature-item">商品訂購前台</div>
+        <div class="bundle-feature-item">LINE 官方帳號建立</div>
+        <div class="bundle-feature-item">LINE 自動訂單通知</div>
+      </div>
+      <button class="btn-select-bundle" onclick="selectBundle('namecard')">選擇這個套餐</button>
+    </div>
+    <div class="bundle-card popular">
+      <div class="bundle-header">
+        <div class="bundle-tag">⭐ 最受歡迎</div>
+        <div class="bundle-name">小商家完整套</div>
+        <div class="bundle-for">適合：食品業者、手作品牌、社區商店</div>
+      </div>
+      <div class="bundle-price">NT$ 8,000 – 12,000</div>
+      <div class="bundle-features">
+        <div class="bundle-feature-item">智慧數位名片</div>
+        <div class="bundle-feature-item">商品訂購前台 + 後台管理</div>
+        <div class="bundle-feature-item">庫存管理</div>
+        <div class="bundle-feature-item">會員 + 點數系統</div>
+        <div class="bundle-feature-item">帳本 + 報表</div>
+        <div class="bundle-feature-item">LINE OA + 自動通知</div>
+        <div class="bundle-feature-item">Google 商家地圖</div>
+      </div>
+      <button class="btn-select-bundle" onclick="selectBundle('shop')">選擇這個套餐</button>
+    </div>
+    <div class="bundle-card">
+      <div class="bundle-header">
+        <div class="bundle-tag">課程 / 活動主辦</div>
+        <div class="bundle-name">活動報名套</div>
+        <div class="bundle-for">適合：瑜珈、課程、養生工作坊、讀書會</div>
+      </div>
+      <div class="bundle-price">NT$ 4,500 – 7,000</div>
+      <div class="bundle-features">
+        <div class="bundle-feature-item">活動展示前台</div>
+        <div class="bundle-feature-item">線上報名表單 + 名額控管</div>
+        <div class="bundle-feature-item">會員資料管理</div>
+        <div class="bundle-feature-item">LINE OA 建立 + 通知</div>
+        <div class="bundle-feature-item">智慧數位名片</div>
+      </div>
+      <button class="btn-select-bundle" onclick="selectBundle('event')">選擇這個套餐</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT FORM -->
+<div class="section form-bg" id="contact-form">
+  <div class="form-wrap">
+    <div class="section-center" style="margin-bottom:28px">
+      <div class="section-tag">免費需求諮詢</div>
+      <h2>告訴我你的需求</h2>
+      <p class="section-sub">填完後 Angel 會在 24 小時內透過 LINE 或電話聯繫你</p>
+    </div>
+    <div class="field">
+      <label>你的姓名 *</label>
+      <input type="text" id="f-name" placeholder="請輸入姓名">
+    </div>
+    <div class="field">
+      <label>手機號碼 *</label>
+      <input type="text" inputmode="numeric" id="f-phone" placeholder="請輸入手機號碼">
+    </div>
+    <div class="field">
+      <label>你的業務類型 *</label>
+      <select id="f-type">
+        <option value="">請選擇</option>
+        <option>健康產品 / 直銷</option>
+        <option>食品 / 農產品</option>
+        <option>課程 / 工作坊</option>
+        <option>手作 / 小品牌</option>
+        <option>社區商家</option>
+        <option>其他</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>已選擇的功能（點上方勾選後自動帶入）</label>
+      <div class="selected-summary" id="selected-summary">
+        <strong>尚未選擇功能</strong>請先到上方「勾選你要的功能」選擇，或直接告訴 Angel 你的需求
+      </div>
+    </div>
+    <div class="field">
+      <label>預算範圍</label>
+      <select id="f-budget">
+        <option value="">不確定，請給我建議</option>
+        <option>NT$3,000 以下</option>
+        <option>NT$3,000–6,000</option>
+        <option>NT$6,000–10,000</option>
+        <option>NT$10,000 以上</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>其他說明或問題</label>
+      <textarea id="f-note" placeholder="例如：我目前用 LINE 群組接單很亂，想要有個可以讓客人自己下單的頁面..."></textarea>
+    </div>
+    <button class="btn-submit" id="submit-btn" onclick="submitForm()">送出需求，等候 Angel 聯繫</button>
+    <div class="form-note">
+      提交後我會在 24 小時內聯繫你 🌿<br>
+      或直接加入 LINE OA：<strong>lin.ee/tMag2XG</strong>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <strong>天使智慧商務 by Angel</strong>
+  LINE OA：lin.ee/tMag2XG &nbsp;｜&nbsp; 手機：0973-180-707<br>
+  <div style="margin-top:8px;color:rgba(255,255,255,.4);font-size:10px">小預算，大系統。幫你把生意搬上線。</div>
+</footer>
+
+<div class="success-overlay" id="success-overlay">
+  <div class="success-box">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">需求已送出！</div>
+    <div class="success-sub">謝謝你的信任，Angel 會在 24 小時內透過 LINE 或電話聯繫你，討論你的專屬報價。</div>
+    <a href="https://lin.ee/tMag2XG" target="_blank" class="btn-line">💬 先加入 LINE 官方帳號</a>
+    <button class="btn-back" onclick="document.getElementById('success-overlay').classList.remove('open')">返回頁面</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'YOUR_GAS_URL_HERE'; // 建好 GAS 後填入
+
+const FEATURES = [
+  { id:'namecard',  cat:'🪪 數位品牌', name:'智慧數位名片',    desc:'QR Code 掃描、個人手機頁面、社群連結一次呈現',      min:1500, max:2500 },
+  { id:'referral',  cat:'🪪 數位品牌', name:'推薦人追蹤系統',  desc:'掃誰的名片就知道、業績來源自動記錄',                min:800,  max:1500 },
+  { id:'line_oa',   cat:'🪪 數位品牌', name:'LINE 官方帳號建立',desc:'申請 LINE OA、基本設定、自動歡迎訊息、圖文選單',   min:1500, max:3000 },
+  { id:'google_map',cat:'🪪 數位品牌', name:'Google 商家地圖', desc:'申請 Google 商家、資料設定、照片上傳、教學',        min:800,  max:1500 },
+
+  { id:'shop_front',cat:'🛍️ 電商訂購', name:'商品訂購前台',   desc:'手機版購物頁、商品分類、加購物車、送出訂單',        min:1500, max:2500 },
+  { id:'order_mgmt',cat:'🛍️ 電商訂購', name:'訂單管理後台',   desc:'查看訂單、確認收款、標記出貨、退貨處理',            min:800,  max:1500 },
+  { id:'inventory', cat:'🛍️ 電商訂購', name:'庫存管理',       desc:'入庫出庫記錄、低庫存提醒、自動下架',                min:800,  max:1500 },
+  { id:'returns',   cat:'🛍️ 電商訂購', name:'退貨退款',       desc:'退貨記錄、庫存補回、帳本自動更新',                  min:500,  max:1000 },
+
+  { id:'event_front',cat:'📅 活動報名', name:'活動展示前台',   desc:'活動清單、詳情頁、封面圖、報名入口',                min:1200, max:2000 },
+  { id:'event_reg', cat:'📅 活動報名',  name:'線上報名表單',   desc:'客製化欄位、名額自動控管、即時確認通知',            min:800,  max:1500 },
+
+  { id:'member',    cat:'👥 會員管理',  name:'會員資料管理',   desc:'建立會員資料、消費記錄、查詢',                      min:800,  max:1500 },
+  { id:'points',    cat:'👥 會員管理',  name:'點數累積系統',   desc:'消費送點、點數記錄、查詢餘額',                      min:800,  max:1500 },
+  { id:'line_notify',cat:'👥 會員管理', name:'LINE 自動通知',  desc:'訂單/報名/付款 自動推播給客人，免手動傳訊息',       min:500,  max:1000 },
+
+  { id:'accounts',  cat:'💰 財務管理',  name:'帳本收支記錄',   desc:'收入支出記錄、餘額計算、對帳輔助',                  min:500,  max:1000 },
+  { id:'reports',   cat:'💰 財務管理',  name:'報表匯出',       desc:'交易明細、帳務統計、CSV 一鍵下載',                  min:300,  max:600  },
+];
+
+const BASE = { min:2000, max:3000 };
+const selected = new Set();
+
+// ── 建立功能選擇器 ──
+function buildFeatureGroups(){
+  const groups = {};
+  FEATURES.forEach(f => {
+    if(!groups[f.cat]) groups[f.cat] = [];
+    groups[f.cat].push(f);
+  });
+  const container = document.getElementById('feature-groups');
+  Object.entries(groups).forEach(([cat, items]) => {
+    const group = document.createElement('div');
+    group.className = 'feature-group';
+    group.innerHTML = `<div class="feature-group-title">${cat}</div>
+      <div class="feature-list">${items.map(f => `
+        <div class="feature-item" id="fi-${f.id}" onclick="toggleFeature('${f.id}')">
+          <div class="feature-checkbox"></div>
+          <div class="feature-info">
+            <div class="feature-name">${f.name}</div>
+            <div class="feature-desc">${f.desc}</div>
+          </div>
+          <div>
+            <div class="feature-price">NT$${f.min.toLocaleString()}–${f.max.toLocaleString()}</div>
+            <div class="feature-price-unit">參考區間</div>
+          </div>
+        </div>`).join('')}
+      </div>`;
+    container.appendChild(group);
+  });
+}
+
+function toggleFeature(id){
+  const el = document.getElementById('fi-'+id);
+  if(selected.has(id)){ selected.delete(id); el.classList.remove('selected'); }
+  else { selected.add(id); el.classList.add('selected'); }
+  updatePrice();
+  updateSummary();
+}
+
+function updatePrice(){
+  let min = BASE.min, max = BASE.max;
+  selected.forEach(id => {
+    const f = FEATURES.find(x=>x.id===id);
+    if(f){ min+=f.min; max+=f.max; }
+  });
+  document.getElementById('price-range').textContent =
+    `NT$ ${min.toLocaleString()} – ${max.toLocaleString()}`;
+  document.getElementById('price-items-count').textContent =
+    `已選 ${selected.size} 個功能（含基本建置費 NT$2,000–3,000）`;
+}
+
+function updateSummary(){
+  const el = document.getElementById('selected-summary');
+  if(!selected.size){
+    el.innerHTML = '<strong>尚未選擇功能</strong>請先到上方「勾選你要的功能」選擇，或直接告訴 Angel 你的需求';
+    return;
+  }
+  const names = [...selected].map(id=>FEATURES.find(f=>f.id===id)?.name).filter(Boolean);
+  el.innerHTML = `<strong>已選 ${names.length} 項功能：</strong>${names.join('、')}`;
+}
+
+// ── 套餐快選 ──
+const BUNDLES = {
+  namecard: ['namecard','referral','shop_front','line_oa','line_notify'],
+  shop:     ['namecard','shop_front','order_mgmt','inventory','member','points','accounts','reports','line_oa','line_notify','google_map'],
+  event:    ['event_front','event_reg','member','line_oa','line_notify','namecard']
+};
+
+function selectBundle(key){
+  selected.clear();
+  document.querySelectorAll('.feature-item').forEach(el=>el.classList.remove('selected'));
+  (BUNDLES[key]||[]).forEach(id=>{
+    selected.add(id);
+    const el=document.getElementById('fi-'+id);
+    if(el) el.classList.add('selected');
+  });
+  updatePrice();
+  updateSummary();
+  scrollToCalc();
+  showToast('已套用套餐，可再調整功能');
+}
+
+// ── 送出表單 ──
+async function submitForm(){
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const type = document.getElementById('f-type').value;
+  if(!name||!phone){ showToast('請填寫姓名和手機號碼','error'); return; }
+  if(!type){ showToast('請選擇業務類型','error'); return; }
+
+  const selectedNames = [...selected].map(id=>FEATURES.find(f=>f.id===id)?.name).filter(Boolean);
+  let totalMin=BASE.min, totalMax=BASE.max;
+  selected.forEach(id=>{ const f=FEATURES.find(x=>x.id===id); if(f){totalMin+=f.min;totalMax+=f.max;} });
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled=true; btn.textContent='送出中...';
+
+  try{
+    const params = new URLSearchParams({
+      action:'submitPlan',
+      name, phone, business_type:type,
+      features: selectedNames.join('、') || '（未指定，直接詢問）',
+      budget: document.getElementById('f-budget').value || '不確定',
+      price_range: `NT$${totalMin.toLocaleString()}–${totalMax.toLocaleString()}`,
+      note: document.getElementById('f-note').value.trim()
+    });
+    if(GAS_URL !== 'YOUR_GAS_URL_HERE'){
+      await fetch(GAS_URL+'?'+params.toString());
+    }
+    document.getElementById('success-overlay').classList.add('open');
+  }catch(e){
+    document.getElementById('success-overlay').classList.add('open');
+  }
+  btn.disabled=false; btn.textContent='送出需求，等候 Angel 聯繫';
+}
+
+function scrollToCalc(){ document.getElementById('calc-section').scrollIntoView({behavior:'smooth'}); }
+function scrollToForm(){ document.getElementById('contact-form').scrollIntoView({behavior:'smooth'}); }
+
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(type?' '+type:'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+buildFeatureGroups();
+</script>
+</body>
+</html>
