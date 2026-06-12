@@ -229,7 +229,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:1
 <div class="toast" id="toast"></div>
 
 <script>
-const GAS_URL    = 'YOUR_GAS_URL_HERE';
+const GAS_URL    = 'https://script.google.com/macros/s/AKfycbyrNUSJb59WoQeXcdTSkKi7RyjS8UBDBJ14FEx1Hy4arJ6-y93yeTahb-wUeSAY4FKgpQ/exec';
 const ADMIN_KEY  = 'ANGEL20261972';
 const PASSWORD   = 'angel2026';
 
@@ -363,7 +363,7 @@ async function updateStatus(id, status){
   item.status = status;
   if(GAS_URL !== 'YOUR_GAS_URL_HERE'){
     const note = document.getElementById('note-'+id)?.value || '';
-    await fetch(GAS_URL+'?'+new URLSearchParams({action:'updatePlan',key:ADMIN_KEY,id,status,admin_note:note}));
+    await fetch(GAS_URL+'?'+new URLSearchParams({action:'updatePlan',key:ADMIN_KEY,id,status,admin_note:note}), {mode:'no-cors'});
   }
   renderStats();
   renderList();
@@ -376,7 +376,7 @@ async function saveNote(id){
   const note = document.getElementById('note-'+id)?.value || '';
   item.admin_note = note;
   if(GAS_URL !== 'YOUR_GAS_URL_HERE'){
-    await fetch(GAS_URL+'?'+new URLSearchParams({action:'updatePlan',key:ADMIN_KEY,id,admin_note:note,status:item.status}));
+    await fetch(GAS_URL+'?'+new URLSearchParams({action:'updatePlan',key:ADMIN_KEY,id,admin_note:note,status:item.status}), {mode:'no-cors'});
   }
   showToast('備註已儲存');
 }
