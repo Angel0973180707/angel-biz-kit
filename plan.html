@@ -442,7 +442,7 @@ footer strong{color:#fff;display:block;font-size:14px;margin-bottom:6px}
 <div class="toast" id="toast"></div>
 
 <script>
-const GAS_URL = 'YOUR_GAS_URL_HERE'; // 建好 GAS 後填入
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyrNUSJb59WoQeXcdTSkKi7RyjS8UBDBJ14FEx1Hy4arJ6-y93yeTahb-wUeSAY4FKgpQ/exec';
 
 const FEATURES = [
   { id:'namecard',  cat:'🪪 數位品牌', name:'智慧數位名片',    desc:'QR Code 掃描、個人手機頁面、社群連結一次呈現',      min:1500, max:2500 },
@@ -574,7 +574,7 @@ async function submitForm(){
       note: document.getElementById('f-note').value.trim()
     });
     if(GAS_URL !== 'YOUR_GAS_URL_HERE'){
-      await fetch(GAS_URL+'?'+params.toString());
+      await fetch(GAS_URL+'?'+params.toString(), {mode:'no-cors'});
     }
     document.getElementById('success-overlay').classList.add('open');
   }catch(e){
