@@ -1,10 +1,15 @@
-const SPREADSHEET_ID = '1n2W0KYk6RHA5lsIYDg_avsKtiS9tUnbJKeOVnswIqOw';
-const ADMIN_KEY      = 'ANGEL20261972';
-const LINE_TOKEN     = 'SGl/bUCnFz3NpOQJJKJTU+zTKgkqtIfdAKE1FM4v6Eu6KKm8i+MmbXsegjW3ef8WLBxNzoIx6oZfh67alrl5OUTdyPezUDiVTz7nbLTwbLESCzzTAQnxcRuwBaKihcgUT1z+ZtQ7Z8QFVOJQhJ4VRAdB04t89/1O/w1cDnyilFU=';
-const LINE_USER_ID   = 'U045fa7302eac96a6d54261d38a67f1b7';
-const SHEET_NAME     = '客戶需求';
+const SHEET_NAME = '客戶需求';
 
-// 修復1：安全解碼中文（防止 double-decode 出錯）
+function getConfig_() {
+  const p = PropertiesService.getScriptProperties();
+  return {
+    spreadsheetId: p.getProperty('SPREADSHEET_ID'),
+    adminKey:      p.getProperty('ADMIN_KEY'),
+    lineToken:     p.getProperty('LINE_TOKEN'),
+    lineUserId:    p.getProperty('LINE_USER_ID'),
+  };
+}
+
 function sd(s) {
   if (!s) return '';
   try { return decodeURIComponent(s); } catch(e) { return String(s); }
@@ -13,23 +18,23 @@ function sd(s) {
 function doGet(e) {
   const p = e.parameter || {};
   const action = p.action || '';
+  const cfg = getConfig_();
   const res = d => ContentService.createTextOutput(JSON.stringify(d))
     .setMimeType(ContentService.MimeType.JSON);
   try {
-    if (action === 'getPlans')   { if (p.key !== ADMIN_KEY) return res({ok:false,error:'驗證失敗'}); return res(getPlans()); }
-    if (action === 'updatePlan') { if (p.key !== ADMIN_KEY) return res({ok:false,error:'驗證失敗'}); return res(updatePlan(p)); }
-    if (action === 'submitPlan') return res(submitPlan(p));
+    if (action === 'getPlans')   { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(getPlans(cfg)); }
+    if (action === 'updatePlan') { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(updatePlan(p, cfg)); }
+    if (action === 'submitPlan') return res(submitPlan(p, cfg));
     return res({ok:false, error:'未知 action'});
   } catch(err) { return res({ok:false, error:err.message}); }
 }
 
 function doPost(e) { return doGet({parameter: e.parameter||{}}); }
 
-function submitPlan(p) {
-  const sh = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+function submitPlan(p, cfg) {
+  const sh = SpreadsheetApp.openById(cfg.spreadsheetId).getSheetByName(SHEET_NAME);
   if (!sh) return {ok:false, error:'找不到工作表：'+SHEET_NAME};
 
-  // 修復1：全部欄位套用 sd() 解碼中文
   const name          = sd(p.name);
   const phone         = sd(p.phone);
   const business_type = sd(p.business_type);
@@ -46,13 +51,14 @@ function submitPlan(p) {
   sendLineMsg(
     `🔔 新客戶需求！\n\n姓名：${name}\n手機：${phone}\n業務：${business_type}\n` +
     `功能：${features||'未選擇'}\n預算：${budget||'不確定'}\n估價：${price_range||'—'}\n` +
-    (note ? `說明：${note}\n` : '') + `\n請到後台查看 📋`
+    (note ? `說明：${note}\n` : '') + `\n請到後台查看 📋`,
+    cfg
   );
   return {ok:true, id};
 }
 
-function getPlans() {
-  const sh = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+function getPlans(cfg) {
+  const sh = SpreadsheetApp.openById(cfg.spreadsheetId).getSheetByName(SHEET_NAME);
   if (!sh) return {ok:true, data:[]};
   const rows = sh.getDataRange().getValues();
   if (rows.length <= 2) return {ok:true, data:[]};
@@ -66,7 +72,7 @@ function getPlans() {
     budget:        String(r[5]||''),
     price_range:   String(r[6]||''),
     note:          String(r[7]||''),
-    status:        String(r[8]||'').trim() || '新需求',  // 修復2：trim() 防空白
+    status:        String(r[8]||'').trim() || '新需求',
     admin_note:    String(r[9]||''),
     created_at:    r[10] ? String(r[10]).slice(0,10) : ''
   }));
@@ -79,8 +85,8 @@ function getPlans() {
   return {ok:true, data};
 }
 
-function updatePlan(p) {
-  const sh = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+function updatePlan(p, cfg) {
+  const sh = SpreadsheetApp.openById(cfg.spreadsheetId).getSheetByName(SHEET_NAME);
   if (!sh) return {ok:false, error:'找不到工作表'};
   const rows = sh.getDataRange().getValues();
   for (let i = 2; i < rows.length; i++) {
@@ -93,12 +99,12 @@ function updatePlan(p) {
   return {ok:false, error:'找不到：'+p.id};
 }
 
-function sendLineMsg(text) {
+function sendLineMsg(text, cfg) {
   try {
     UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+LINE_TOKEN},
-      payload:JSON.stringify({to:LINE_USER_ID, messages:[{type:'text',text}]}),
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.lineToken},
+      payload:JSON.stringify({to:cfg.lineUserId, messages:[{type:'text',text}]}),
       muteHttpExceptions:true
     });
   } catch(e) {}
