@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客戶總覽 Hub — 天使智慧商務</title>
+<style>
+:root{
+  --dark:#1B2F3A;--green:#1B3A2A;--green-mid:#2D5C42;--green-soft:#4A7C59;
+  --green-pale:#EAF3EC;--gold:#C8962A;--gold-pale:#FBF4E8;--gold-light:#F5E8C8;
+  --text:#1A2A1E;--text-mid:#4A5C4E;--text-dim:#8A9E8E;
+  --border:#D8E8DA;--bg:#F7FAF8;--white:#fff;--red:#C94A3A;--blue:#2563EB;
+  --font:'PingFang TC','Microsoft JhengHei','Noto Sans TC',sans-serif;
+  --r:12px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+
+/* ── LOGIN ── */
+.login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.login-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:32px 28px;max-width:360px;width:100%;text-align:center}
+.login-logo{width:52px;height:52px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:var(--green);margin:0 auto 14px}
+.login-title{font-size:18px;font-weight:900;color:var(--green);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text-dim);margin-bottom:24px}
+.login-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:16px;padding:13px;font-family:var(--font);outline:none;text-align:center;letter-spacing:3px;margin-bottom:12px}
+.login-input:focus{border-color:var(--green)}
+.login-btn{width:100%;padding:14px;background:var(--gold);color:var(--green);border:none;border-radius:var(--rs);font-size:15px;font-weight:800;cursor:pointer;font-family:var(--font)}
+.login-error{font-size:12px;color:var(--red);margin-top:8px;display:none}
+
+/* ── HEADER ── */
+.app-header{background:var(--green);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-brand{display:flex;align-items:center;gap:10px;color:#fff}
+.header-logo{width:34px;height:34px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:var(--green)}
+.header-title{font-size:15px;font-weight:800}
+.header-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+.header-actions{display:flex;gap:8px}
+.btn-sm{padding:7px 14px;border-radius:99px;font-size:12px;font-weight:800;border:none;cursor:pointer;font-family:var(--font)}
+.btn-sm-outline{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3)}
+
+/* ── MAIN ── */
+.main{display:none}
+.main.show{display:block}
+.content{max-width:640px;margin:0 auto;padding:24px 16px}
+
+/* ── SEARCH BOX ── */
+.search-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:24px}
+.search-label{font-size:13px;font-weight:800;color:var(--green-mid);margin-bottom:12px}
+.search-row{display:flex;gap:10px}
+.search-input{flex:1;padding:13px 16px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:16px;font-family:var(--font);color:var(--text);background:var(--bg);outline:none;letter-spacing:.04em}
+.search-input:focus{border-color:var(--green)}
+.search-btn{padding:13px 22px;background:var(--green);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.15s}
+.search-btn:hover{background:var(--green-mid)}
+.search-btn:disabled{opacity:.5;cursor:not-allowed}
+.search-hint{font-size:11.5px;color:var(--text-dim);margin-top:8px}
+
+/* ── RESULT AREA ── */
+.result-area{display:none}
+.result-phone{font-size:15px;font-weight:800;color:var(--green);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── SYSTEM CARD ── */
+.sys-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.sys-header{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--green-pale)}
+.sys-icon{font-size:20px;flex-shrink:0}
+.sys-name{font-size:14px;font-weight:800;color:var(--green);flex:1}
+.sys-loading{font-size:12px;color:var(--text-dim)}
+
+.call-list{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+
+/* ── CALL ITEM ── */
+.call-item{display:flex;align-items:flex-start;gap:10px}
+.call-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.call-dot.found{background:var(--green-mid)}
+.call-dot.empty{background:var(--text-dim)}
+.call-dot.loading{background:var(--gold);animation:pulse 1s infinite}
+.call-dot.error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+.call-label{font-size:12px;font-weight:700;color:var(--text-mid);min-width:70px;flex-shrink:0}
+.call-result{font-size:13px;color:var(--text);flex:1;line-height:1.6}
+.call-result.empty{color:var(--text-dim);font-style:italic}
+.call-result.error{color:var(--red)}
+
+/* result items */
+.res-item{background:var(--green-pale);border:1px solid var(--border);border-radius:6px;padding:7px 11px;margin-top:4px;font-size:13px;line-height:1.7}
+.res-item:first-child{margin-top:0}
+
+/* ── NO RESULT ── */
+.no-result{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:32px;text-align:center;color:var(--text-dim)}
+.no-result-icon{font-size:36px;margin-bottom:12px}
+.no-result-msg{font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text-mid)}
+.no-result-sub{font-size:12px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#fff;border-radius:99px;padding:10px 20px;font-size:13px;font-weight:600;z-index:600;opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">天</div>
+    <div class="login-title">客戶總覽 Hub</div>
+    <div class="login-sub">天使智慧商務 · 跨系統查詢</div>
+    <input type="password" class="login-input" id="pwd-input" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">進入</button>
+    <div class="login-error" id="login-error">密碼錯誤，請重試</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main-app" class="main">
+  <div class="app-header">
+    <div class="header-brand">
+      <div class="header-logo">天</div>
+      <div>
+        <div class="header-title">客戶總覽 Hub</div>
+        <div class="header-sub">跨系統查詢・輸入電話即可</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="plan-admin.html"><button class="btn-sm btn-sm-outline">需求後台</button></a>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Search -->
+    <div class="search-card">
+      <div class="search-label">📞 輸入客戶電話號碼查詢</div>
+      <div class="search-row">
+        <input type="tel" class="search-input" id="phoneInput" placeholder="例：0912345678"
+               onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="search-btn" id="searchBtn" onclick="doSearch()">查詢</button>
+      </div>
+      <div class="search-hint">支援完整號碼或後4碼模糊查詢・同時查詢所有系統</div>
+    </div>
+
+    <!-- Results -->
+    <div class="result-area" id="resultArea">
+      <div class="result-phone" id="resultPhone"></div>
+      <div id="systemResults"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 設定：未來新增系統只在這裡加一筆 ──
+const ADMIN_KEY   = 'ANGEL20261972070707';
+const PASSWORD    = 'angel2026';
+const DIAG_GAS    = 'https://script.google.com/macros/s/AKfycbxpxXKX-rE3VfqYiRqjoDGtruYI0Q1CjOk3jGyBCcAwMR0Erf__TmL5snJikX3KMDYZ/exec';
+const PROPOSAL_GAS= 'https://script.google.com/macros/s/AKfycbxuvn0CTiQ42qBUkU_tFA4X5GnzsOAOuMSfw304nRtjTpFzmg56MD3-EiUKHcJo9_p_BQ/exec';
+const BIZKIT_GAS  = 'https://script.google.com/macros/s/AKfycbyrNUSJb59WoQeXcdTSkKi7RyjS8UBDBJ14FEx1Hy4arJ6-y93yeTahb-wUeSAY4FKgpQ/exec';
+
+const SYSTEMS = [
+  {
+    id: 'diagnosis',
+    name: '品牌診斷系統',
+    icon: '🔬',
+    gasUrl: DIAG_GAS,
+    calls: [
+      {
+        label: '品牌診斷',
+        method: 'POST',
+        body: phone => ({ action: 'queryByPhone', payload: { phone, sheet: 'diag' } }),
+        parse: res => res.ok
+          ? [res.message || '已找到診斷記錄']
+          : []
+      },
+      {
+        label: '素材收集',
+        method: 'POST',
+        body: phone => ({ action: 'queryByPhone', payload: { phone, sheet: 'material' } }),
+        parse: res => res.ok
+          ? [res.message || '已找到素材記錄']
+          : []
+      }
+    ]
+  },
+  {
+    id: 'proposal',
+    name: '互動提案 / 名片內容',
+    icon: '📋',
+    gasUrl: PROPOSAL_GAS,
+    calls: [
+      {
+        label: '名片內容案件',
+        method: 'GET',
+        params: phone => ({ action: 'queryByPhone', phone }),
+        parse: res => {
+          if (res.status !== 'ok' || !res.data || !res.data.length) return [];
+          return res.data.map(d => `${d.caseCode}｜${d.clientName}｜${d.status}｜${d.createdDate}`);
+        }
+      }
+    ]
+  },
+  {
+    id: 'biz-kit',
+    name: '天使智慧商務',
+    icon: '💼',
+    gasUrl: BIZKIT_GAS,
+    calls: [
+      {
+        label: '服務需求',
+        method: 'GET',
+        params: phone => ({ action: 'queryByPhone', phone, key: ADMIN_KEY }),
+        parse: res => {
+          if (!res.ok || !res.data || !res.data.length) return [];
+          return res.data.map(d =>
+            `${d.status}｜${d.price_range || '未估價'}｜${d.business_type}` +
+            (d.created_at ? `｜${d.created_at}` : '')
+          );
+        }
+      }
+    ]
+  }
+  // 新增系統：複製上方一個物件，填入 id/name/icon/gasUrl/calls 即可
+];
+
+// ── 登入 ──
+function doLogin() {
+  if (document.getElementById('pwd-input').value === PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-app').classList.add('show');
+    document.getElementById('phoneInput').focus();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+// ── 電話正規化：去掉所有非數字 ──
+function normalizePhone(raw) {
+  return raw.replace(/\D/g, '');
+}
+
+// ── 執行單一 call ──
+async function executeCall(call, gasUrl, phone) {
+  if (call.method === 'POST') {
+    const resp = await fetch(gasUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(call.body(phone))
+    });
+    return await resp.json();
+  } else {
+    const params = new URLSearchParams(call.params(phone));
+    const resp = await fetch(gasUrl + '?' + params.toString());
+    return await resp.json();
+  }
+}
+
+// ── 查詢 ──
+async function doSearch() {
+  const raw = document.getElementById('phoneInput').value.trim();
+  if (!raw) { showToast('請輸入電話號碼'); return; }
+  const phone = normalizePhone(raw);
+  if (phone.length < 4) { showToast('請輸入至少4碼'); return; }
+
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true; btn.textContent = '查詢中…';
+
+  // 顯示結果區
+  document.getElementById('resultArea').style.display = 'block';
+  document.getElementById('resultPhone').innerHTML = `📞 查詢電話：<span style="color:var(--gold)">${formatPhone(raw)}</span>`;
+
+  // 建立每個 system + call 的 placeholder
+  const sysDivs = {};
+  let html = '';
+  SYSTEMS.forEach(sys => {
+    html += `<div class="sys-card" id="sys-${sys.id}">
+      <div class="sys-header">
+        <span class="sys-icon">${sys.icon}</span>
+        <span class="sys-name">${esc(sys.name)}</span>
+        <span class="sys-loading" id="loading-${sys.id}">查詢中…</span>
+      </div>
+      <div class="call-list" id="calls-${sys.id}">
+        ${sys.calls.map((c, idx) => `
+          <div class="call-item" id="call-${sys.id}-${idx}">
+            <div class="call-dot loading" id="dot-${sys.id}-${idx}"></div>
+            <span class="call-label">${esc(c.label)}</span>
+            <div class="call-result" id="res-${sys.id}-${idx}"><span style="color:var(--text-dim)">查詢中…</span></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('systemResults').innerHTML = html;
+
+  // 平行發送所有查詢
+  const allPromises = [];
+  SYSTEMS.forEach(sys => {
+    sys.calls.forEach((call, idx) => {
+      const p = executeCall(call, sys.gasUrl, phone)
+        .then(res => {
+          const items = call.parse(res);
+          setCallResult(sys.id, idx, items);
+        })
+        .catch(err => {
+          setCallError(sys.id, idx, err.message);
+        });
+      allPromises.push(p);
+    });
+  });
+
+  await Promise.allSettled(allPromises);
+
+  // 移除 loading 標示
+  SYSTEMS.forEach(sys => {
+    const el = document.getElementById('loading-' + sys.id);
+    if (el) el.textContent = '';
+  });
+
+  // 檢查是否所有系統都查無資料
+  checkAllEmpty(phone);
+
+  btn.disabled = false; btn.textContent = '查詢';
+}
+
+function setCallResult(sysId, idx, items) {
+  const dot = document.getElementById(`dot-${sysId}-${idx}`);
+  const res = document.getElementById(`res-${sysId}-${idx}`);
+  if (!dot || !res) return;
+  if (items && items.length > 0) {
+    dot.className = 'call-dot found';
+    res.innerHTML = items.map(t => `<div class="res-item">${esc(t)}</div>`).join('');
+    res.className = 'call-result';
+  } else {
+    dot.className = 'call-dot empty';
+    res.textContent = '尚未開始';
+    res.className = 'call-result empty';
+  }
+}
+
+function setCallError(sysId, idx, msg) {
+  const dot = document.getElementById(`dot-${sysId}-${idx}`);
+  const res = document.getElementById(`res-${sysId}-${idx}`);
+  if (!dot || !res) return;
+  dot.className = 'call-dot error';
+  res.textContent = '查詢失敗（' + msg + '）';
+  res.className = 'call-result error';
+}
+
+function checkAllEmpty(phone) {
+  // 只看 call-result 有無 found dot
+  const found = document.querySelectorAll('.call-dot.found').length;
+  if (found === 0) {
+    const existing = document.getElementById('no-result-msg');
+    if (existing) return;
+    const msg = document.createElement('div');
+    msg.id = 'no-result-msg';
+    msg.className = 'no-result';
+    msg.innerHTML = `<div class="no-result-icon">🔍</div>
+      <div class="no-result-msg">這支電話目前沒有任何系統紀錄</div>
+      <div class="no-result-sub">電話 ${esc(phone)} 在以上所有系統均查無資料</div>`;
+    document.getElementById('systemResults').appendChild(msg);
+  }
+}
+
+function formatPhone(raw) {
+  const d = raw.replace(/\D/g, '');
+  if (d.length === 10) return d.slice(0,4) + '-' + d.slice(4,7) + '-' + d.slice(7);
+  return raw;
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>

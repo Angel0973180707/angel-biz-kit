@@ -22,8 +22,9 @@ function doGet(e) {
   const res = d => ContentService.createTextOutput(JSON.stringify(d))
     .setMimeType(ContentService.MimeType.JSON);
   try {
-    if (action === 'getPlans')   { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(getPlans(cfg)); }
-    if (action === 'updatePlan') { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(updatePlan(p, cfg)); }
+    if (action === 'getPlans')      { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(getPlans(cfg)); }
+    if (action === 'updatePlan')    { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(updatePlan(p, cfg)); }
+    if (action === 'queryByPhone')  { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(queryByPhone_(p.phone || '', cfg)); }
     if (action === 'submitPlan') return res(submitPlan(p, cfg));
     return res({ok:false, error:'未知 action'});
   } catch(err) { return res({ok:false, error:err.message}); }
@@ -97,6 +98,29 @@ function updatePlan(p, cfg) {
     }
   }
   return {ok:false, error:'找不到：'+p.id};
+}
+
+function queryByPhone_(phone, cfg) {
+  const sh = SpreadsheetApp.openById(cfg.spreadsheetId).getSheetByName(SHEET_NAME);
+  if (!sh) return { ok: true, data: [] };
+  const rows = sh.getDataRange().getValues();
+  if (rows.length <= 2) return { ok: true, data: [] };
+  const data = rows.slice(2)
+    .filter(r => {
+      if (!r[0]) return false;
+      const rowPhone = String(r[2] || '');
+      return rowPhone && (rowPhone.includes(phone) || phone.includes(rowPhone.slice(-4)));
+    })
+    .map(r => ({
+      id:            String(r[0]),
+      name:          String(r[1] || ''),
+      phone:         String(r[2] || ''),
+      business_type: String(r[3] || ''),
+      status:        String(r[8] || '新需求').trim(),
+      price_range:   String(r[6] || ''),
+      created_at:    r[10] ? String(r[10]).slice(0, 10) : ''
+    }));
+  return { ok: true, data };
 }
 
 function sendLineMsg(text, cfg) {
