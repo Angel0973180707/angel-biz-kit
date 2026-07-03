@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>您的專屬管理入口 — 天使幸福智慧商務</title>
+<style>
+:root{
+  --green:#1B3A2A;--green-mid:#2D5C42;--green-soft:#4A7C59;
+  --green-pale:#EAF3EC;--gold:#C8962A;--gold-light:#E8B44A;--gold-pale:#FBF4E8;
+  --text:#1A2A1E;--text-mid:#4A5C4E;--text-dim:#8A9E8E;
+  --border:#D8E8DA;--bg:#F7FAF8;--white:#fff;--red:#C94A3A;
+  --font:'PingFang TC','Microsoft JhengHei','Noto Sans TC',sans-serif;
+  --r:16px;--rs:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(160deg,var(--green) 0%,#2D5C42 60%,#3A6B50 100%);
+  padding:36px 20px 32px;text-align:center;position:relative;overflow:hidden
+}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 30%,rgba(200,150,42,.2) 0%,transparent 55%)}
+.hero-content{position:relative}
+.hero-sun{font-size:48px;display:block;margin-bottom:10px;filter:drop-shadow(0 2px 12px rgba(200,150,42,.6));animation:sp 4s ease-in-out infinite}
+@keyframes sp{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.hero-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.65);letter-spacing:.1em;margin-bottom:4px}
+.hero-title{font-size:22px;font-weight:900;color:#fff;line-height:1.4;margin-bottom:6px}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.55);line-height:1.7}
+
+/* ── CONTENT ── */
+.content{max-width:560px;margin:0 auto;padding:22px 14px 60px}
+
+/* ── SECTION ── */
+.sec{margin-bottom:18px}
+.sec-title{font-size:11px;font-weight:900;color:var(--text-dim);letter-spacing:.12em;margin-bottom:10px;padding-left:2px}
+
+/* ── CARD ── */
+.card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.card-header{background:var(--green-pale);padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.card-icon{font-size:20px}
+.card-name{font-size:14px;font-weight:800;color:var(--green)}
+.card-body{padding:14px 16px}
+
+/* ── BIG BUTTON ── */
+.big-btn{
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:16px 18px;border-radius:var(--rs);border:none;
+  cursor:pointer;font-family:var(--font);text-align:left;
+  text-decoration:none;-webkit-tap-highlight-color:transparent;
+  transition:.15s;margin-bottom:10px
+}
+.big-btn:last-child{margin-bottom:0}
+.big-btn:hover{filter:brightness(1.06)}
+.big-btn:active{transform:scale(.98)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green-soft{background:var(--green-soft);color:#fff}
+.btn-gold{background:var(--gold);color:var(--green)}
+.btn-outline{background:var(--green-pale);color:var(--green);border:1.5px solid var(--border)}
+.btn-line{background:#06C755;color:#fff}
+.btn-icon{font-size:22px;flex-shrink:0}
+.btn-text{flex:1}
+.btn-label{font-size:15px;font-weight:800;line-height:1.3}
+.btn-desc{font-size:11px;opacity:.75;margin-top:2px}
+.btn-arrow{font-size:18px;opacity:.6;flex-shrink:0}
+
+/* ── EMPTY ── */
+.empty-note{font-size:13px;color:var(--text-dim);font-style:italic;padding:4px 0}
+
+/* ── INFO ROWS ── */
+.info-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-label{font-size:12px;color:var(--text-dim);min-width:72px}
+.info-val{font-size:13px;font-weight:700;color:var(--text)}
+.info-tag{display:inline-block;background:var(--green-pale);color:var(--green-mid);font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;border:1px solid var(--border)}
+
+/* ── LOADING / ERROR ── */
+.loading-box{text-align:center;padding:48px 20px;color:var(--text-dim)}
+.loading-spin{font-size:32px;display:block;margin-bottom:10px;animation:spin 1.5s linear infinite}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.err-box{text-align:center;padding:40px 20px;color:var(--text-dim)}
+.err-icon{font-size:36px;margin-bottom:8px}
+.err-msg{font-size:14px;font-weight:700;color:var(--red);margin-bottom:4px}
+.err-sub{font-size:12px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- LOADING STATE -->
+<div id="loadingBox" class="loading-box">
+  <span class="loading-spin">☀️</span>
+  <div>載入中，請稍候…</div>
+</div>
+
+<!-- ERROR STATE -->
+<div id="errBox" class="err-box" style="display:none">
+  <div class="err-icon">😔</div>
+  <div class="err-msg">找不到這個客戶入口</div>
+  <div class="err-sub">請確認連結是否正確，<br>或聯繫 Angel 重新取得連結。</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="mainContent" style="display:none">
+
+  <div class="hero">
+    <div class="hero-content">
+      <span class="hero-sun">☀️</span>
+      <div class="hero-name" id="heroGreeting">您的專屬管理入口</div>
+      <div class="hero-title" id="heroTitle">幸福天使智慧商務</div>
+      <div class="hero-sub">所有系統，一個入口進入</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- 智慧名片 -->
+    <div class="sec">
+      <div class="sec-title">您的智慧名片</div>
+      <div id="cardSection"></div>
+    </div>
+
+    <!-- 營運系統 -->
+    <div class="sec" id="sysSec" style="display:none">
+      <div class="sec-title">您的營運系統</div>
+      <div id="sysSection"></div>
+    </div>
+
+    <!-- 聯繫 Angel -->
+    <div class="sec">
+      <div class="sec-title">需要協助？</div>
+      <a class="big-btn btn-line" href="https://lin.ee/UoF8eYY" target="_blank">
+        <span class="btn-icon">💬</span>
+        <div class="btn-text">
+          <div class="btn-label">聯繫 Angel ☀️</div>
+          <div class="btn-desc">LINE 官方帳號・有問題隨時找我</div>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>
+    </div>
+
+    <!-- 維護資訊 -->
+    <div class="sec" id="maintSec" style="display:none">
+      <div class="sec-title">維護資訊</div>
+      <div class="card">
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">維護到期日</span>
+            <span class="info-val" id="maintDue"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const BIZKIT_GAS = 'https://script.google.com/macros/s/AKfycbyrNUSJb59WoQeXcdTSkKi7RyjS8UBDBJ14FEx1Hy4arJ6-y93yeTahb-wUeSAY4FKgpQ/exec';
+
+async function init(){
+  const params = new URLSearchParams(location.search);
+  const clientId = params.get('client') || '';
+  if(!clientId){
+    showErr('網址缺少 client 參數。');
+    return;
+  }
+  try{
+    const url = BIZKIT_GAS + '?action=getDeliveryHub&client=' + encodeURIComponent(clientId);
+    const r = await fetch(url);
+    const data = await r.json();
+    if(!data.ok){
+      showErr(data.error || '找不到此客戶資料。');
+      return;
+    }
+    render(data.data);
+  } catch(e){
+    showErr('網路錯誤，請稍後再試。');
+  }
+}
+
+function showErr(msg){
+  document.getElementById('loadingBox').style.display='none';
+  const box = document.getElementById('errBox');
+  box.querySelector('.err-sub').innerHTML = msg + '<br>或聯繫 Angel 重新取得連結。';
+  box.style.display='block';
+}
+
+function render(d){
+  document.getElementById('loadingBox').style.display='none';
+  document.getElementById('mainContent').style.display='block';
+
+  // 標題
+  const name = d.client_name || '';
+  if(name){
+    document.getElementById('heroGreeting').textContent = name + '，您好 ☀️';
+    document.getElementById('heroTitle').textContent = name + ' 的管理入口';
+    document.title = name + ' 的管理入口 — 天使幸福智慧商務';
+  }
+
+  // 智慧名片
+  const cardSec = document.getElementById('cardSection');
+  if(d.card_id && d.card_url){
+    cardSec.innerHTML = `
+      <a class="big-btn btn-green" href="${esc(d.card_url)}" target="_blank">
+        <span class="btn-icon">💳</span>
+        <div class="btn-text">
+          <div class="btn-label">查看我的智慧名片</div>
+          <div class="btn-desc">名片編號 ${esc(d.card_id)}・點此開啟</div>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>
+      <a class="big-btn btn-outline" href="${esc(d.card_poster_url)}" target="_blank">
+        <span class="btn-icon">📬</span>
+        <div class="btn-text">
+          <div class="btn-label">名片管理後台（交付卡）</div>
+          <div class="btn-desc">更新名片內容・查看推薦點數</div>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>`;
+  } else {
+    cardSec.innerHTML = '<div class="empty-note">尚未建立智慧名片，請聯繫 Angel。</div>';
+  }
+
+  // 營運系統
+  const sysItems = [
+    { url: d.order_front_url,  icon:'🛒', label:'訂購系統（對外前台）', desc:'客戶下單・購買商品' },
+    { url: d.order_admin_url,  icon:'📦', label:'訂購系統（管理後台）', desc:'查看訂單・管理出貨' },
+    { url: d.member_admin_url, icon:'👥', label:'會員系統後台',         desc:'查看會員・點數管理' },
+    { url: d.event_admin_url,  icon:'📅', label:'報名系統後台',         desc:'活動管理・報名記錄' }
+  ].filter(i => i.url);
+
+  if(sysItems.length > 0){
+    document.getElementById('sysSec').style.display='block';
+    document.getElementById('sysSection').innerHTML = sysItems.map(i=>`
+      <a class="big-btn btn-green-soft" href="${esc(i.url)}" target="_blank">
+        <span class="btn-icon">${i.icon}</span>
+        <div class="btn-text">
+          <div class="btn-label">${esc(i.label)}</div>
+          <div class="btn-desc">${esc(i.desc)}</div>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>`).join('');
+  }
+
+  // 維護到期日
+  if(d.maintenance_due_date){
+    document.getElementById('maintSec').style.display='block';
+    document.getElementById('maintDue').textContent = formatDate(d.maintenance_due_date);
+  }
+}
+
+function formatDate(s){
+  if(!s) return '';
+  try{
+    const d = new Date(s);
+    if(isNaN(d)) return s;
+    return d.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric'});
+  } catch(e){ return s; }
+}
+
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>

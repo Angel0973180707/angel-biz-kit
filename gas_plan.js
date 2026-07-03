@@ -22,15 +22,21 @@ function doGet(e) {
   const res = d => ContentService.createTextOutput(JSON.stringify(d))
     .setMimeType(ContentService.MimeType.JSON);
   try {
-    if (action === 'getPlans')      { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(getPlans(cfg)); }
-    if (action === 'updatePlan')    { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(updatePlan(p, cfg)); }
-    if (action === 'queryByPhone')  { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(queryByPhone_(p.phone || '', cfg)); }
-    if (action === 'submitPlan') return res(submitPlan(p, cfg));
+    if (action === 'getPlans')        { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(getPlans(cfg)); }
+    if (action === 'updatePlan')      { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(updatePlan(p, cfg)); }
+    if (action === 'queryByPhone')    { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(queryByPhone_(p.phone || '', cfg)); }
+    if (action === 'submitPlan')      return res(submitPlan(p, cfg));
+    if (action === 'getDeliveryHub')  return res(getDeliveryHub_(p, cfg));
+    if (action === 'saveDeliveryHub') { if (p.key !== cfg.adminKey) return res({ok:false,error:'驗證失敗'}); return res(saveDeliveryHub_(p, cfg)); }
     return res({ok:false, error:'未知 action'});
   } catch(err) { return res({ok:false, error:err.message}); }
 }
 
-function doPost(e) { return doGet({parameter: e.parameter||{}}); }
+function doPost(e) {
+  const bodyParams = {};
+  try { if (e.postData && e.postData.contents) Object.assign(bodyParams, JSON.parse(e.postData.contents)); } catch(err) {}
+  return doGet({ parameter: Object.assign({}, e.parameter || {}, bodyParams) });
+}
 
 function submitPlan(p, cfg) {
   const sh = SpreadsheetApp.openById(cfg.spreadsheetId).getSheetByName(SHEET_NAME);
@@ -121,6 +127,68 @@ function queryByPhone_(phone, cfg) {
       created_at:    r[10] ? String(r[10]).slice(0, 10) : ''
     }));
   return { ok: true, data };
+}
+
+// ── delivery_hub ──────────────────────────────────────────
+const DELIVERY_HUB_SHEET = 'delivery_hub';
+const CARD_BASE = 'https://angel-namecard.letssyncus.com/';
+
+function getDeliveryHub_(p, cfg) {
+  const clientId = String(p.client || '').trim();
+  if (!clientId) return { ok: false, error: '缺少 client 參數' };
+  const ss = SpreadsheetApp.openById(cfg.spreadsheetId);
+  const sh = ss.getSheetByName(DELIVERY_HUB_SHEET);
+  if (!sh) return { ok: false, error: '尚未建立 delivery_hub 分頁' };
+  const rows = sh.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]) === clientId) {
+      return { ok: true, data: {
+        client_id:           String(rows[i][0]||''),
+        client_name:         String(rows[i][1]||''),
+        card_id:             String(rows[i][2]||''),
+        card_url:            String(rows[i][3]||''),
+        card_poster_url:     String(rows[i][4]||''),
+        order_front_url:     String(rows[i][5]||''),
+        order_admin_url:     String(rows[i][6]||''),
+        member_admin_url:    String(rows[i][7]||''),
+        event_admin_url:     String(rows[i][8]||''),
+        maintenance_due_date:String(rows[i][9]||'')
+      }};
+    }
+  }
+  return { ok: false, error: '找不到客戶：' + clientId };
+}
+
+function saveDeliveryHub_(p, cfg) {
+  const cardId    = sd(p.card_id || '').trim();
+  const clientName= sd(p.client_name || '').trim();
+  const clientId  = cardId || ('HUB' + Date.now());
+  const cardUrl       = cardId ? CARD_BASE + 'index.html?id=' + cardId + '&view=1' : '';
+  const cardPosterUrl = cardId ? CARD_BASE + 'poster.html?id=' + cardId : '';
+  const now = new Date().toLocaleString('zh-TW', {timeZone:'Asia/Taipei'});
+  const newRow = [
+    clientId, clientName, cardId, cardUrl, cardPosterUrl,
+    sd(p.order_front_url  || ''), sd(p.order_admin_url || ''),
+    sd(p.member_admin_url || ''), sd(p.event_admin_url || ''),
+    sd(p.maintenance_due_date || ''), now
+  ];
+  const ss = SpreadsheetApp.openById(cfg.spreadsheetId);
+  let sh = ss.getSheetByName(DELIVERY_HUB_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(DELIVERY_HUB_SHEET);
+    sh.appendRow(['client_id','client_name','card_id','card_url','card_poster_url',
+                  'order_front_url','order_admin_url','member_admin_url','event_admin_url',
+                  'maintenance_due_date','updated_at']);
+  }
+  const rows = sh.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]) === clientId) {
+      sh.getRange(i + 1, 1, 1, newRow.length).setValues([newRow]);
+      return { ok: true, client_id: clientId };
+    }
+  }
+  sh.appendRow(newRow);
+  return { ok: true, client_id: clientId };
 }
 
 function sendLineMsg(text, cfg) {
