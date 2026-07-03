@@ -345,6 +345,7 @@ function reqCard(d){
       <div class="detail-row"><span class="detail-label">估算報價</span><span class="detail-value" style="color:var(--gold);font-weight:700">${d.price_range||'—'}</span></div>
       <div class="detail-row"><span class="detail-label">選擇功能</span><div class="detail-features">${(d.features||'未指定').split('、').join('<br>')}</div></div>
       ${d.note?`<div class="detail-row"><span class="detail-label">客戶說明</span><span class="detail-value">${d.note}</span></div>`:''}
+      <div class="detail-row"><span class="detail-label">部署狀態</span><span class="detail-value"><span id="deploy-badge-${d.id}" style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;${deployBadgeStyle(d.deploy_status)}">${d.deploy_status||'📋 待建置'}</span></span></div>
       <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--text-mid)">我的備註：</div>
       <textarea class="admin-note-input" id="note-${d.id}" placeholder="記錄聯繫狀況、報價調整、特殊需求...">${d.admin_note||''}</textarea>
       <div class="action-btns">
@@ -354,6 +355,14 @@ function reqCard(d){
         <button class="btn-action btn-note" onclick="saveNote('${d.id}')">💾 存備註</button>
         <button class="btn-action btn-proposal" onclick="openProposal('${d.id}')">📄 產生提案</button>
         <button class="btn-action btn-claude" onclick="openClaude('${d.id}')">🤖 Claude 指令</button>
+      </div>
+      <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px;">
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:7px;font-weight:700;">🚀 部署狀態切換</div>
+        <div class="action-btns" style="margin-top:0;">
+          <button class="btn-action" style="background:#374151;color:#fff;" onclick="updateDeployStatus('${d.id}','📋 待建置')">📋 待建置</button>
+          <button class="btn-action" style="background:#92400e;color:#fff;" onclick="updateDeployStatus('${d.id}','⏳ 待客戶部署')">⏳ 待客戶部署</button>
+          <button class="btn-action" style="background:#065f46;color:#fff;" onclick="updateDeployStatus('${d.id}','🚀 已上線')">🚀 已上線</button>
+        </div>
       </div>
     </div>
   </div>`;
@@ -374,6 +383,25 @@ async function updateStatus(id, status){
   renderStats();
   renderList();
   showToast('狀態已更新：'+status);
+}
+
+function deployBadgeStyle(status){
+  if(status==='⏳ 待客戶部署') return 'background:#7c2d12;color:#fdba74;';
+  if(status==='🚀 已上線') return 'background:#064e3b;color:#6ee7b7;';
+  return 'background:#1f2937;color:#9ca3af;';
+}
+
+async function updateDeployStatus(id, status){
+  const item = allData.find(d=>d.id===id);
+  if(!item) return;
+  item.deploy_status = status;
+  const badge = document.getElementById('deploy-badge-'+id);
+  if(badge){ badge.textContent = status; badge.style.cssText = 'display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;'+deployBadgeStyle(status); }
+  if(GAS_URL !== 'YOUR_GAS_URL_HERE'){
+    const note = document.getElementById('note-'+id)?.value || '';
+    await fetch(GAS_URL+'?'+new URLSearchParams({action:'updatePlan',key:ADMIN_KEY,id,deploy_status:status,admin_note:note,status:item.status}), {mode:'no-cors'});
+  }
+  showToast('部署狀態：'+status);
 }
 
 async function saveNote(id){
